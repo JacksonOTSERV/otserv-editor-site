@@ -86,6 +86,14 @@ h1{font-size:clamp(32px,5vw,56px);font-weight:800;line-height:1.1;
   transition:background .2s;
 }
 .btn-secondary:hover{background:rgba(243,141,28,.07)}
+.btn-download{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(243,141,28,.1);border:1px solid rgba(243,141,28,.45);
+  color:var(--gold);font-weight:700;font-size:15px;
+  padding:14px 28px;border-radius:10px;text-decoration:none;
+  transition:background .2s,transform .15s,box-shadow .2s;
+}
+.btn-download:hover{background:rgba(243,141,28,.18);transform:translateY(-2px);box-shadow:0 8px 28px rgba(243,141,28,.2)}
 .hero-note{margin-top:20px;font-size:13px;color:var(--muted)}
 
 /* ── SECTION BASE ── */
@@ -219,10 +227,11 @@ footer{
     <h1>OTServ Editor</h1>
     <p class="hero-sub">Editor profissional de mapas, sprites e objetos para servidores OTServ. Tudo que o RME e o Object Builder fazem — em um só lugar, mais rápido e mais leve.</p>
     <div class="hero-btns">
-      <a href="https://buy.stripe.com/dRm3coe1g0bC9tz7go3oA00" target="_blank" class="btn-primary">Começar por R$30/mês</a>
+      <a href="https://buy.stripe.com/dRm3coe1g0bC9tz7go3oA00" target="_blank" class="btn-primary">Assinar por R$30/mês</a>
+      <a href="https://pub-eea07bb443aa4735a5cb0d98ab89888e.r2.dev/OTServEditor-Setup.exe" class="btn-download">⬇ Baixar o programa</a>
       <a href="#features" class="btn-secondary">Ver recursos</a>
     </div>
-    <p class="hero-note">Licença por máquina · Cancele quando quiser</p>
+    <p class="hero-note">Baixe grátis · Ative com o e-mail da assinatura · Cancele quando quiser</p>
   </div>
 </section>
 
