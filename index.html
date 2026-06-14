@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OTServ Editor — Editor profissional para servidores OTServ</title>
+<meta name="description" content="Editor completo de mapas, sprites e objetos para servidores OTServ. Compatível com TFS 1.x, todas as versões 7.x–15.x.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#e8c96a;--gold2:#c89b30;--gold3:#7b5f1a;
+  --bg:#060a0e;--bg2:#0d1318;--bg3:#111820;
+  --text:#d4d8dc;--muted:#6b7580;
+  --radius:12px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.6}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 6vw;height:60px;
+  background:rgba(6,10,14,.85);backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(200,155,50,.1);
+}
+.nav-logo{font-size:16px;font-weight:700;color:var(--gold);letter-spacing:.5px}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;transition:color .2s}
+.nav-links a:hover{color:var(--gold)}
+.nav-cta{
+  background:linear-gradient(135deg,var(--gold3),var(--gold2));
+  color:#000;font-size:13px;font-weight:700;
+  padding:8px 20px;border-radius:8px;text-decoration:none;
+  transition:opacity .2s;
+}
+.nav-cta:hover{opacity:.85}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  padding:100px 6vw 60px;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(180,130,40,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(180,130,40,.05) 1px,transparent 1px);
+  background-size:48px 48px;
+}
+.hero::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 50%,transparent 40%,var(--bg) 100%);
+}
+.hero-inner{position:relative;z-index:1;max-width:720px}
+.badge{
+  display:inline-block;margin-bottom:24px;
+  padding:5px 14px;border-radius:99px;
+  border:1px solid rgba(200,155,50,.3);
+  font-size:12px;color:var(--gold2);letter-spacing:1px;text-transform:uppercase;
+}
+.emblem{
+  width:80px;height:80px;margin:0 auto 24px;
+  border:2px solid rgba(200,155,50,.35);border-radius:18px;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(145deg,#0e1318,#141b22);
+  box-shadow:0 0 32px rgba(200,155,50,.12);
+}
+.emblem svg{width:44px;height:44px;filter:drop-shadow(0 0 6px rgba(200,155,50,.4))}
+h1{font-size:clamp(32px,5vw,56px);font-weight:800;line-height:1.1;
+   color:var(--gold);text-shadow:0 0 40px rgba(220,175,60,.25);margin-bottom:16px}
+.hero-sub{font-size:clamp(15px,2vw,19px);color:var(--muted);max-width:560px;margin:0 auto 36px}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn-primary{
+  background:linear-gradient(135deg,var(--gold3),var(--gold));
+  color:#000;font-weight:700;font-size:15px;
+  padding:14px 32px;border-radius:10px;text-decoration:none;
+  box-shadow:0 4px 24px rgba(200,155,50,.3);
+  transition:transform .15s,box-shadow .15s;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(200,155,50,.4)}
+.btn-secondary{
+  border:1px solid rgba(200,155,50,.3);color:var(--gold2);
+  font-size:15px;padding:14px 28px;border-radius:10px;text-decoration:none;
+  transition:background .2s;
+}
+.btn-secondary:hover{background:rgba(200,155,50,.07)}
+.hero-note{margin-top:20px;font-size:13px;color:var(--muted)}
+
+/* ── SECTION BASE ── */
+section{padding:80px 6vw}
+.sec-title{font-size:clamp(22px,3vw,32px);font-weight:700;color:var(--gold);margin-bottom:10px}
+.sec-sub{color:var(--muted);margin-bottom:48px;font-size:15px}
+.center{text-align:center}
+
+/* ── FEATURES ── */
+#features{background:var(--bg2)}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.feat-card{
+  background:var(--bg3);border:1px solid rgba(200,155,50,.1);
+  border-radius:var(--radius);padding:28px 24px;
+  transition:border-color .2s,transform .2s;
+}
+.feat-card:hover{border-color:rgba(200,155,50,.3);transform:translateY(-3px)}
+.feat-icon{font-size:28px;margin-bottom:14px}
+.feat-card h3{font-size:16px;font-weight:700;color:var(--gold2);margin-bottom:8px}
+.feat-card p{font-size:14px;color:var(--muted);line-height:1.6}
+
+/* ── COMPAT ── */
+#compat{background:var(--bg)}
+.compat-tags{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.tag{
+  padding:7px 16px;border-radius:99px;font-size:13px;font-weight:600;
+  border:1px solid rgba(200,155,50,.2);color:var(--gold2);
+  background:rgba(200,155,50,.05);
+}
+
+/* ── PRICING ── */
+#pricing{background:var(--bg2)}
+.pricing-card{
+  max-width:420px;margin:0 auto;
+  background:var(--bg3);border:1px solid rgba(200,155,50,.25);
+  border-radius:16px;padding:40px 36px;text-align:center;
+  box-shadow:0 0 48px rgba(200,155,50,.08);
+}
+.plan-name{font-size:13px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:16px}
+.price{font-size:56px;font-weight:800;color:var(--gold);line-height:1}
+.price span{font-size:20px;font-weight:400;color:var(--muted);vertical-align:top;margin-top:12px;display:inline-block}
+.price-period{font-size:14px;color:var(--muted);margin:6px 0 28px}
+.price-features{list-style:none;text-align:left;margin-bottom:32px}
+.price-features li{
+  padding:9px 0;font-size:14px;color:var(--text);
+  border-bottom:1px solid rgba(255,255,255,.04);
+  display:flex;align-items:center;gap:10px;
+}
+.price-features li::before{content:'✓';color:var(--gold);font-weight:700;flex-shrink:0}
+.btn-buy{
+  display:block;width:100%;
+  background:linear-gradient(135deg,var(--gold3),var(--gold));
+  color:#000;font-weight:700;font-size:16px;
+  padding:16px;border-radius:10px;text-decoration:none;
+  box-shadow:0 4px 24px rgba(200,155,50,.3);
+  transition:transform .15s,box-shadow .15s;
+}
+.btn-buy:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(200,155,50,.45)}
+.price-note{font-size:12px;color:var(--muted);margin-top:14px}
+
+/* ── FAQ ── */
+#faq{background:var(--bg)}
+.faq-list{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.faq-item{
+  background:var(--bg2);border:1px solid rgba(200,155,50,.1);
+  border-radius:var(--radius);overflow:hidden;
+}
+.faq-q{
+  width:100%;padding:18px 22px;text-align:left;
+  background:none;border:none;cursor:pointer;
+  font-size:15px;font-weight:600;color:var(--text);
+  display:flex;justify-content:space-between;align-items:center;gap:16px;
+}
+.faq-q span{color:var(--gold2);font-size:18px;transition:transform .2s;flex-shrink:0}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s}
+.faq-a p{padding:0 22px 18px;font-size:14px;color:var(--muted);line-height:1.7}
+.faq-item.open .faq-a{max-height:200px}
+.faq-item.open .faq-q span{transform:rotate(45deg)}
+
+/* ── POLÍTICAS ── */
+#policies{background:var(--bg2)}
+.policies-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.policy-card{
+  background:var(--bg3);border:1px solid rgba(200,155,50,.08);
+  border-radius:var(--radius);padding:24px;
+}
+.policy-card h3{font-size:14px;font-weight:700;color:var(--gold2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.policy-card p{font-size:13px;color:var(--muted);line-height:1.7}
+
+/* ── FOOTER ── */
+footer{
+  background:var(--bg);border-top:1px solid rgba(200,155,50,.08);
+  padding:32px 6vw;display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:16px;
+}
+.foot-logo{font-size:15px;font-weight:700;color:var(--gold)}
+.foot-links{display:flex;gap:20px;flex-wrap:wrap}
+.foot-links a{font-size:13px;color:var(--muted);text-decoration:none}
+.foot-links a:hover{color:var(--gold)}
+.foot-copy{font-size:12px;color:var(--muted);width:100%;text-align:center;margin-top:8px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  nav{padding:0 4vw}
+  .nav-links{display:none}
+  section{padding:60px 5vw}
+  .pricing-card{padding:28px 22px}
+  footer{justify-content:center;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">⚔ OTServ Editor</div>
+  <ul class="nav-links">
+    <li><a href="#features">Recursos</a></li>
+    <li><a href="#compat">Compatibilidade</a></li>
+    <li><a href="#pricing">Preços</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <a href="#pricing" class="nav-cta">Assinar agora</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="badge">Editor para OTServ · TFS 1.x</div>
+    <div class="emblem">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="13" height="13" rx="2" fill="rgba(200,155,50,.15)" stroke="rgba(200,155,50,.6)" stroke-width="1.2"/>
+        <rect x="22" y="5" width="13" height="13" rx="2" fill="rgba(200,155,50,.08)" stroke="rgba(200,155,50,.35)" stroke-width="1.2"/>
+        <rect x="5" y="22" width="13" height="13" rx="2" fill="rgba(200,155,50,.08)" stroke="rgba(200,155,50,.35)" stroke-width="1.2"/>
+        <rect x="22" y="22" width="13" height="13" rx="2" fill="rgba(200,155,50,.15)" stroke="rgba(200,155,50,.6)" stroke-width="1.2"/>
+        <circle cx="20" cy="20" r="2.5" fill="rgba(220,175,60,.8)"/>
+      </svg>
+    </div>
+    <h1>OTServ Editor</h1>
+    <p class="hero-sub">Editor profissional de mapas, sprites e objetos para servidores OTServ. Tudo que o RME e o Object Builder fazem — em um só lugar, mais rápido e mais leve.</p>
+    <div class="hero-btns">
+      <a href="#pricing" class="btn-primary">Começar por R$30/mês</a>
+      <a href="#features" class="btn-secondary">Ver recursos</a>
+    </div>
+    <p class="hero-note">Licença por máquina · Cancele quando quiser</p>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="center">
+    <div class="sec-title">Tudo em um só editor</div>
+    <p class="sec-sub">Sem precisar abrir 3 programas diferentes para editar seu servidor.</p>
+  </div>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon">🗺️</div>
+      <h3>Editor de Mapa</h3>
+      <p>Igual ao RME: bordas automáticas, auto-border, seleção por polígono, gerador de dungeons, ilhas, florestas e muito mais.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🎨</div>
+      <h3>Editor de Sprites</h3>
+      <p>Abre .spr de 686MB em menos de 2 segundos com carregamento sob demanda. Importa/exporta PNG, edita pixel a pixel.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📦</div>
+      <h3>Editor de Objetos</h3>
+      <p>Igual ao Object Builder. Edita .dat, .obd e .otb. Suporte a todas as propriedades de items, outfits, efeitos e mísseis.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">⚡</div>
+      <h3>Ultra Leve</h3>
+      <p>Consome ~580MB de RAM — menos da metade do Electron. Abre arquivos grandes sem travar nem piscar.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🔄</div>
+      <h3>Auto-Update</h3>
+      <p>Atualizações automáticas em segundo plano. Sempre na versão mais recente sem precisar baixar de novo.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🌐</div>
+      <h3>Edição colaborativa (Live)</h3>
+      <p>Edite o mapa com outros usuários em tempo real pela internet, sem precisar abrir porta no roteador.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🖼️</div>
+      <h3>PNG → OTBM</h3>
+      <p>Importe uma imagem PNG e converta automaticamente para mapa .otbm mapeando as cores para items do seu servidor.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🤖</div>
+      <h3>Gerador de Mapas com IA</h3>
+      <p>Gere dungeons, ilhas, fortalezas, florestas, rios e vilas automaticamente com parâmetros ajustáveis e preview em tempo real.</p>
+    </div>
+  </div>
+</section>
+
+<!-- COMPAT -->
+<section id="compat">
+  <div class="center">
+    <div class="sec-title">Compatibilidade</div>
+    <p class="sec-sub">Suporta todas as versões de cliente e servidor OTServ.</p>
+    <div class="compat-tags">
+      <span class="tag">TFS 1.x</span>
+      <span class="tag">Cliente 7.x</span>
+      <span class="tag">Cliente 8.x</span>
+      <span class="tag">Cliente 9.x</span>
+      <span class="tag">Cliente 10.x</span>
+      <span class="tag">Cliente 11.x</span>
+      <span class="tag">Cliente 12.x</span>
+      <span class="tag">Cliente 13.x</span>
+      <span class="tag">Cliente 14.x</span>
+      <span class="tag">Cliente 15.x</span>
+      <span class="tag">.spr / .dat</span>
+      <span class="tag">.otbm</span>
+      <span class="tag">.otb</span>
+      <span class="tag">.obd</span>
+      <span class="tag">Windows 10/11</span>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="center">
+    <div class="sec-title">Preço simples</div>
+    <p class="sec-sub">Uma assinatura, todos os recursos.</p>
+  </div>
+  <div class="pricing-card">
+    <div class="plan-name">Plano Mensal</div>
+    <div class="price"><span>R$</span>30</div>
+    <div class="price-period">por mês · por máquina</div>
+    <ul class="price-features">
+      <li>Editor de Mapa completo (igual RME)</li>
+      <li>Editor de Sprites (.spr lazy 686MB→2s)</li>
+      <li>Editor de Objetos (.dat / .obd / .otb)</li>
+      <li>Gerador de mapas com IA</li>
+      <li>PNG → OTBM</li>
+      <li>Edição colaborativa Live</li>
+      <li>Auto-update automático</li>
+      <li>Suporte via email</li>
+    </ul>
+    <a href="mailto:enriquejackson66@gmail.com?subject=Licença OTServ Editor" class="btn-buy">Assinar agora — R$30/mês</a>
+    <p class="price-note">Pagamento via Stripe · Cartão de crédito/débito · Cancele quando quiser</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="center">
+    <div class="sec-title">Perguntas frequentes</div>
+    <p class="sec-sub"></p>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-q">Como funciona a licença? <span>+</span></button>
+      <div class="faq-a"><p>A licença é vinculada à sua máquina (HWID). Após o pagamento você recebe uma chave que ativa o editor no seu computador. Se trocar de PC, entre em contato pelo email de suporte.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Posso cancelar quando quiser? <span>+</span></button>
+      <div class="faq-a"><p>Sim. Basta cancelar pela sua conta no Stripe ou enviar um email para enriquejackson66@gmail.com. O acesso continua até o fim do período pago.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Funciona em qual sistema operacional? <span>+</span></button>
+      <div class="faq-a"><p>Windows 10 e Windows 11 (64-bit). Suporte a Mac e Linux está planejado para versões futuras.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">O editor fica offline após cancelar? <span>+</span></button>
+      <div class="faq-a"><p>Sim. A licença expira ao fim do mês pago e o editor deixa de funcionar até uma nova assinatura ser ativada.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Precisa de internet para usar? <span>+</span></button>
+      <div class="faq-a"><p>Apenas para verificar a licença na abertura. Depois o editor funciona 100% offline. A função Live requer conexão para edição colaborativa.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- POLÍTICAS -->
+<section id="policies">
+  <div class="center">
+    <div class="sec-title">Políticas</div>
+    <p class="sec-sub">Transparência total sobre compra, reembolso e privacidade.</p>
+  </div>
+  <div class="policies-grid">
+    <div class="policy-card">
+      <h3>Política de Reembolso</h3>
+      <p>Não oferecemos reembolso após a ativação da licença, pois o produto é digital e a chave de ativação é vinculada à sua máquina. Em caso de problemas técnicos, entre em contato pelo email de suporte antes de solicitar cancelamento.</p>
+    </div>
+    <div class="policy-card">
+      <h3>Cancelamento</h3>
+      <p>Você pode cancelar sua assinatura a qualquer momento diretamente pelo Stripe ou por email. O acesso ao editor continua válido até o fim do período mensal já pago.</p>
+    </div>
+    <div class="policy-card">
+      <h3>Privacidade</h3>
+      <p>Coletamos apenas o identificador de hardware (HWID) para vincular a licença à sua máquina. Nenhum dado pessoal é armazenado além do email cadastrado no Stripe para cobrança.</p>
+    </div>
+    <div class="policy-card">
+      <h3>Suporte</h3>
+      <p>Suporte disponível por email: <a href="mailto:enriquejackson66@gmail.com" style="color:var(--gold2)">enriquejackson66@gmail.com</a>. Respondemos em até 48 horas em dias úteis.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-logo">⚔ OTServ Editor</div>
+  <div class="foot-links">
+    <a href="#features">Recursos</a>
+    <a href="#pricing">Preços</a>
+    <a href="#policies">Políticas</a>
+    <a href="mailto:enriquejackson66@gmail.com">Suporte</a>
+  </div>
+  <div class="foot-copy">© 2026 OTServ Editor · Todos os direitos reservados</div>
+</footer>
+
+<script>
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.parentElement;
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+</script>
+</body>
+</html>
